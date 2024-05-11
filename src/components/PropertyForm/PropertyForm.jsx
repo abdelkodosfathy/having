@@ -75,8 +75,8 @@ const Tab2 = ({ formData, handleChange, isUpdate }) => {
         </div>
 
         <div className="radio">
-          <input type="radio" id="apartment" name="type" value="apartment" onChange={handleChange} checked={isUpdate ? isUpdate.type === 'apartment' : formData.type === 'apartment'} disabled={isUpdate} />
-          <label htmlFor="apartment" className='radio-button'>Apartment</label>
+          <input type="radio" id="appartment" name="type" value="appartment" onChange={handleChange} checked={isUpdate ? isUpdate.type === 'appartment' : formData.type === 'appartment'} disabled={isUpdate} />
+          <label htmlFor="appartment" className='radio-button'>Appartment</label>
         </div>
 
         <div className="radio">
@@ -283,7 +283,17 @@ const PropertyForm  = ({ isUpdate, onAddProp}) => {
     city: 'cairo',
     image: [],
     price: 0,
-    action: 0
+    action: 0,
+    feature1: 0,
+    feature2: 0,
+    feature3: 0,
+    feature4: 0,
+    feature5: 0,
+    feature6: 0,
+    feature7: 0,
+    feature8: 1,
+    feature9: 0,
+    feature10: 1,
   });
 
   const [activeTab, setActiveTab] = useState(1);

@@ -1,34 +1,38 @@
 import { BrowserRouter, Routes, Route} from "react-router-dom";
-import { useEffect, useState, useContext } from "react";
+import { useState, useContext, lazy, Suspense } from "react";
 import { DataContext } from "./components/Context";
 
 import './App.css'
 import NavBar from './components/Navbar/NavBar'
 //pages
-import Home from './pages/Home/Home';
-import Buy from './pages/Buy/Buy';
-import Rent from './pages/Rent/Rent';
-import User from "./pages/User/User";
-import NotFound from './pages/NotFound';
-import { TokenProvider } from "./components/Context";
-import CardsViewer from "./components/CardsViewer/CardsViewer";
+// import Home from './pages/Home/Home';
+// import Buy from './pages/Buy/Buy';
+// import Rent from './pages/Rent/Rent';
+// import User from "./pages/User/User";
+// import NotFound from './pages/NotFound';
 
+const Home = lazy(() => import("./pages/Home/Home"));
+const Buy = lazy(() => import("./pages/Buy/Buy"));
+const Rent = lazy(() => import("./pages/Rent/Rent"));
+const User = lazy(() => import("./pages/User/User"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 function App() {
   console.log("app");
   const auth = useContext(DataContext).loginState;
   console.log(auth);
-  const [marketData, setMarketData] = useState({ rent: [], sell: [] });
   return (
     <BrowserRouter>
       <NavBar/>
-      <Routes>
-          <Route path="/" element={<Home />}></Route>
-          <Route path="/rent" element={<Rent/>}/>
-          <Route path="/buy" element={<Buy/>}/>
-          <Route path="/user" element={auth.login ? <User/> : <Home notAuth={true}/>}/>
-          <Route path="*" element={<NotFound/>}/>
-      </Routes>
+      <Suspense fallback={<h1>Loading..</h1>}>
+        <Routes>
+            <Route path="/" element={<Home />}></Route>
+            <Route path="/rent" element={<Rent/>}/>
+            <Route path="/buy" element={<Buy/>}/>
+            <Route path="/user" element={auth.login ? <User/> : <Home notAuth={true}/>}/>
+            <Route path="*" element={<NotFound/>}/>
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }

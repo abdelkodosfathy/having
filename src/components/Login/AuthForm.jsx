@@ -30,7 +30,7 @@ const AuthForm = forwardRef(({}, ref) => {
       if(e.status === 200){
         const resToken = e.data.data.token
         console.log(e);
-        tokenChanger(resToken, 200);
+        tokenChanger(resToken, true);
         LoginSuccessfully();
         navigate("/buy");
       }
@@ -58,12 +58,12 @@ const AuthForm = forwardRef(({}, ref) => {
     .then(res => {
       console.log(res);
       const resToken = res.data.data.token;
-      tokenChanger(resToken, 200);
+      tokenChanger(resToken, true);
       navigate("/buy");
       if(e.status === 200){
         const resToken = e.data.data.token
         console.log(e);
-        tokenChanger(resToken, 200);
+        tokenChanger(resToken, true);
       }
       setVerified("in progress");
       function checkVerify(){
@@ -139,11 +139,11 @@ const AuthForm = forwardRef(({}, ref) => {
             </a>
           </div>
           <span>or use your email for registration</span>
-          <input required type="text" placeholder="Name" name='name'/>
-          <input required type="email" placeholder="Email" name='email'/>
-          <input required type="number" placeholder="phone" name='phone'/>
-          <input required type="password" placeholder="Password" name='password'/>
-          <input required type="password" placeholder="confirm password" name='password_confirmation'/>
+          <input required type="text" placeholder="Name" name='name' autoComplete="off"/>
+          <input required type="email" placeholder="Email" name='email' autoComplete="off"/>
+          <input required type="number" placeholder="phone" name='phone' autoComplete="off"/>
+          <input required type="password" placeholder="Password" name='password' autoComplete="off"/>
+          <input required type="password" placeholder="confirm password" name='password_confirmation' autoComplete="off"/>
           <button className={styles.signUpButton}>Sigsn Up</button>
         </form>
       </div>
@@ -160,8 +160,8 @@ const AuthForm = forwardRef(({}, ref) => {
             </a>
           </div>
           <span>or use your account</span>
-          <input required type="email" placeholder="Email" name='email' />
-          <input required type="password" placeholder="Password" name='password'/>
+          <input required type="email" placeholder="Email" name='email' autoComplete="email"/>
+          <input required type="password" placeholder="Password" name='password' autoComplete="current-password"/>
           <a href="#">Forgot your password?</a>
           <button>Sign In</button> 
           {/* <dotlottie-player 

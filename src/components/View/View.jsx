@@ -14,7 +14,7 @@ const View = forwardRef(({...props}, ref) => {
       {data&&
       <>
       <div className="dep-images">
-      <ImagesSlider images={data.img}/>
+      {data.img[0] && <ImagesSlider images={data.img}/>}
       </div>
       <div className="dep-heading">
         <h3> <i className="fa-solid fa-map-location-dot"></i> {data.address}</h3>

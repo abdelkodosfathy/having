@@ -4,7 +4,7 @@ import './SideBar.css';
 import Combobox from '../Combobox/Combobox';
 import Button from './Button';
 import { DataContext } from '../Context';
-const SideBar = () => {
+const SideBar = ({onFilterChange }) => {
 
   const minRef = useRef(null);
   const maxRef = useRef(null);
@@ -26,7 +26,24 @@ const SideBar = () => {
     minRef.current.innerText = priceData.value[0];
     maxRef.current.innerText = priceData.value[1];
   }
-  
+  function handleFilters(city = null,
+    type = null,
+    bedrooms = 0,
+    bathrooms = 0,
+    minPrice = 0,
+    maxPrice = 0
+  ){
+    const filters = {
+      city: city,
+      type: type,
+      bedrooms: bedrooms,
+      bathrooms: bathrooms,
+      minPrice: minPrice,
+      maxPrice: maxPrice
+    };
+    console.log(filters);
+    onFilterChange(filters)
+  }
   return (
     <div className={`side-bar ${darkMode? 'dark' : ''}`}>
       <div className="head">
@@ -39,10 +56,10 @@ const SideBar = () => {
           <Button onClicked={() => propertyType("house")} proprety="house" isActivated={property}>
             <i className="fa-solid fa-house"></i>
           </Button>
-          <Button onClicked={() => propertyType("apartment")} proprety="apartment" isActivated={property}>
+          <Button onClicked={() => propertyType("appartment")} proprety="appartment" isActivated={property}>
             <i className="fa-solid fa-building"></i>
           </Button>
-          <Button onClicked={() => propertyType("commercial")} proprety="commercial" isActivated={property}>
+          <Button onClicked={() => propertyType("villa")} proprety="villa" isActivated={property}>
             <i className="fa-solid fa-briefcase"></i>
           </Button>
           <Button onClicked={() => propertyType("land plat")} proprety="land plat" isActivated={property}>
@@ -111,7 +128,7 @@ const SideBar = () => {
         </ul>
       </div>
       <div className="apply-filters">
-        <button>
+        <button onClick={() => handleFilters(null, null, rooms, null, 100000, 3000000)}>
           Apply
         </button>
       </div>

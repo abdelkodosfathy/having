@@ -12,12 +12,10 @@ export function TokenProvider({ children }){
   const [lang, setLang] = useState("Ar");
 
   function changeToken(e, state) {
-    if(state === 200){
       setLoginState(prev => ({
-        'login': true,
+        'login': state,
         'token': e
       }));
-    }
   }
 
   function changeLang(lang){

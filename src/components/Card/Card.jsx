@@ -14,11 +14,11 @@ const Card = ({ handleUnLoveCard,handleRemoveCard,onUpdate,action, data,...props
   }
   const [loved,setLoved] = useState(myData.loved);
   const loginData = useContext(DataContext).loginState;
+  const token = loginData.token;
 
   function handleLovedCard(state , cardId) {
     if(loginData.login){
       setLoved(state);
-      const token = loginData.token;
       axios({
         headers: {
           'Accept': 'application/vnd.api+json',
@@ -52,7 +52,7 @@ const Card = ({ handleUnLoveCard,handleRemoveCard,onUpdate,action, data,...props
   }
   return (
     <div className="card-container">
-      {!remove ? 
+      {/* {!remove ?  */}
       <div className={`card ${myData.darkMode&& 'dark'} 
       ${props.selectedIndex === myData.id && 'selected'}`} 
       key={props.key} 
@@ -93,7 +93,7 @@ const Card = ({ handleUnLoveCard,handleRemoveCard,onUpdate,action, data,...props
                 </>
               ) : action === "tasks" ? (
                 <>
-                <i className="fa-solid fa-xmark" onClick={() => askToRemove()}></i>
+                <i className="fa-solid fa-xmark" onClick={() => handleRemoveCard(myData)}></i>
                 <i className="fa-solid fa-pen" onClick={onUpdate}></i>
                 </>
                 ) : (
@@ -109,9 +109,9 @@ const Card = ({ handleUnLoveCard,handleRemoveCard,onUpdate,action, data,...props
           </div> 
         </div>
       </div>
-      :
-      <RemoveCard removeFrom="fav"/>
-      }
+      {/* :
+      <RemoveCard removeFrom="fav" cardID={myData.id} token={token}/>
+      } */}
     </div>
   )
 }

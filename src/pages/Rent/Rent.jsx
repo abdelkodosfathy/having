@@ -30,10 +30,21 @@ const Rent = () => {
   //   setSelectedCard(cardData.id)
   //   viewRef.current = cardData;
   // }
+
+  const [filterData, setFilterData] = useState({
+    city: null,
+    type: null,
+  });
+
+  // Function to handle data changes from the SideBar
+  const handleFilterChange = (newData) => {
+    setFilterData(newData);
+  };
+
   return (
     <div className='buy'>
-    <SideBar />
-    <CardsViewer action={"rent"}/>
+    <SideBar onFilterChange={handleFilterChange}/>
+    <CardsViewer action={"rent"} filterData={filterData}/>
     </div>
   )
 }

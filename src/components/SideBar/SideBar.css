@@ -124,6 +124,11 @@ input[type=range]::-webkit-slider-thumb:first-of-type {
 .priceSlider{
   margin: 20px 0;
 }
+.rooms-btns{
+  display: flex;
+  justify-content: space-between;
+}
+
 .side-bar-rooms {
 
 }

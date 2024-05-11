@@ -4,12 +4,15 @@ import { FunctionsContext, DataContext } from '../Context';
 import './NavBar.css'
 import AuthForm from '../Login/AuthForm';
 import SelectList from '../SelectList/SelectList';
+import axios from 'axios';
 // import { useEffect } from 'react';
 const NavBar = () => {
   const navigate = useNavigate();
   const x = useContext(DataContext);
   const dark = useContext(DataContext).darkMode;
   const darkModeChanger = useContext(FunctionsContext).changeDarkMode;
+  const tokenChanger = useContext(FunctionsContext).changeToken;
+
   const [userList, setUserList] = useState();
 
   function darkMode() {
@@ -33,8 +36,6 @@ const userListRef = useRef(null);
         if(userListRef.current && !userListRef.current.contains(event.target)){
           console.log('Clicked outside the element');
           setUserList(false)
-        }else {
-          console.log("list clicked ?");
         }
       }
     }
@@ -47,7 +48,20 @@ const userListRef = useRef(null);
 
 
   function handleLogout(){
+    const token = x.loginState.token;
+    console.log("log out");
+    axios("https://app.having.market/api/logout", {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      method: "post",
+    }).then(e => {
+      if(e.status === 200){
+        tokenChanger(null, false)
+        console.log("loged out: ",e);
+      }
 
+    })
   }
 
   const AuthModal = useRef();
@@ -73,9 +87,11 @@ const userListRef = useRef(null);
         </li>
       </ul>
       <div className="actions">
+        {/* dark mode button */}
         <button
         className={`dark-mood ${dark ? "fa-solid" : "fa-regular"} fa-eye`}
         onClick={darkMode} />
+        {/* user list button */}
         { x.loginState.login ? 
         <>
         <div className="user-icon">
@@ -84,11 +100,17 @@ const userListRef = useRef(null);
           userList && 
           <ul ref={userListRef} className='list-items'>
             <li>Profile</li>
-            <li onClick={() => navigate("/user")}>
+            <li onClick={() => {
+              navigate("/user")
+              handelUserList();
+            }}>
               Dashboard
             </li>
-            <li>
-            <i className="fa-solid fa-right-from-bracket"></i>
+            <li onClick={() => {
+              handleLogout();
+              handelUserList();
+            }}>
+            <i className="fa-solid fa-right-from-bracket" ></i>
             </li>
           </ul>
         }
@@ -98,30 +120,8 @@ const userListRef = useRef(null);
           <i className="fa-solid fa-right-to-bracket"></i>
         </button>
         }
-        {/* <div className="user-icon">
-          {
-            x.loginState.login ?
-            <>
-            <ul className="list-items">
-              <li>one</li>
-              <li>two</li>
-              <li>
-              <i 
-                onClick={handleAuthInClick}
-                class="fa-solid fa-right-to-bracket"></i>
-              </li>
-            </ul></> :
-            <>
-            <Link to={"/user"}>
-              <i
-              onClick={handleAuthInClick}
-              class="fa-solid fa-right-from-bracket"
-              style={{coloe: "white"}}></i>
-            </Link>
-          </>
-          }
-        </div> */}
-        <SelectList />
+        {/* lang button */}
+        {/* <SelectList /> */}
       </div>
     </nav>
     </>

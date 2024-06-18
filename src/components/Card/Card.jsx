@@ -2,11 +2,9 @@ import { useState, useContext } from 'react'
 import axios from 'axios';
 import './card.css';
 import { DataContext } from '../Context'
-import dep from '../../imgs/dep2.jpg';
-import RemoveCard from './RemoveCard';
 
 const Card = ({ handleUnLoveCard,handleRemoveCard,onUpdate,action, data,...props}) => {
-  const [remove, setRemove] = useState(false);  
+  // const [remove, setRemove] = useState(false);  // ask about deleting the property
   const darkMode = useContext(DataContext).darkMode;
   const myData = {
     ...data,
@@ -15,6 +13,7 @@ const Card = ({ handleUnLoveCard,handleRemoveCard,onUpdate,action, data,...props
   const [loved,setLoved] = useState(myData.loved);
   const loginData = useContext(DataContext).loginState;
   const token = loginData.token;
+  const [ showPhoneNumber, setShowPhoneNumber] = useState(false)
 
   function handleLovedCard(state , cardId) {
     if(loginData.login){
@@ -32,40 +31,54 @@ const Card = ({ handleUnLoveCard,handleRemoveCard,onUpdate,action, data,...props
           task_id: `${cardId}`,
         }
       }).then(e => {
-        console.log(e);
+        // console.log(e);
       }).catch((e)=>{
-        console.log(e);
+        // console.log(e);
       });
     } else {
       alert("u are not loged in")
     }
   }
-  function handleLocation () {
-    // navigate to location
+  function handleLocation (e) {
+    // console.log("location");
+    window.location = e;
   }
-  function handleCardClicked(){
-    console.log(myData);
-    props.onSelect(myData);
+  function handleCardClicked(e){
+    const cardAction = e.target.tagName.toLowerCase();
+    if(cardAction === "i" || cardAction === "a" || cardAction === "button"){
+      console.log("clicked: ", cardAction);
+    } else {
+      // console.log(myData);
+      props.onSelect(myData);
+      document.querySelector(".card-viewer").scrollTo({
+          top:0,
+        // behavior: "smooth"
+      })
+    }
   }
-  function askToRemove(){
-    setRemove(true)
-  }
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Phone number copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+    });
+  };
+  // console.log("card: ", myData.id, "renderd");
   return (
-    <div className="card-container">
-      {/* {!remove ?  */}
+    // <div className="card-container">
       <div className={`card ${myData.darkMode&& 'dark'} 
       ${props.selectedIndex === myData.id && 'selected'}`} 
       key={props.key} 
       onClick={(e) => handleCardClicked(e)}>
         <div className="card-img">
-        {/* <img loading='lazy' src={`https://app.having.market/public/images/${myData.img[0].img_name}`} alt="" /> */}
         {
           myData.img[0] ? <img loading='lazy' src={`https://app.having.market/public/images/${myData.img[0].img_name}`}/> : null
         }
         </div>
         <div className="card-data">
           <h2>{myData.type}</h2>
-          <div onClick={handleLocation}>
+          <div className='card-text' >
             <p>{myData.city}</p>
             <p>{myData.address}</p>
           </div>
@@ -76,20 +89,33 @@ const Card = ({ handleUnLoveCard,handleRemoveCard,onUpdate,action, data,...props
             {myData.size? <span><i className="fa-solid fa-ruler-combined"></i> {myData.size}</span> : null}
           </div>
           <div className="card-btns">
-            <button className='card-phone-btn'>
-              <i className="fa-solid fa-phone"></i>
-            </button>
-            <button className='card-mail-btn'>
+            {/* <button className='card-phone-btn'>
+              <i class="fa-brands fa-whatsapp"></i>
+            </button> */}
+            <a href={`https://wa.me/+2${myData.user.phone}`} className='card-whatsapp-btn'>
+              <i className="fa-brands fa-whatsapp"></i>
+            </a>
+            {/* <button className='card-phone-btn' onClick={() => setShowPhoneNumber(prev => !prev)}>
+              {showPhoneNumber?
+              myData.user.phone : <i className="fa-solid fa-phone"></i>}
+            </button> */}
+            <a className='card-phone-btn' onClick={() => {
+              setShowPhoneNumber(prev => !prev);
+              if (!showPhoneNumber) copyToClipboard(myData.user.phone);
+            }}>
+              {showPhoneNumber ? myData.user.phone : <i className="fa-solid fa-phone"></i>}
+            </a>
+            {/* <button className='card-mail-btn'> */}
+            <a className='card-mail-btn' href={`mailto:${myData.user.email}}`}>
               <i className="fa-solid fa-envelope"></i>
-            </button>
+            </a>
+            {/* </button> */}
           </div>
           <div className="love-icon">
             {
               action === "fav" ? (<>
                 <i className="fa-solid fa-heart"
-                onClick={() => askToRemove()}></i>
-                {/* {myData.action === 0?<i class="fa-solid fa-s"></i>:
-                myData.action === 1? <i class="fa-solid fa-r"></i>: null} */}
+                onClick={() => handleUnLoveCard(myData.id)}></i>
                 </>
               ) : action === "tasks" ? (
                 <>
@@ -105,14 +131,13 @@ const Card = ({ handleUnLoveCard,handleRemoveCard,onUpdate,action, data,...props
                 onClick={() => handleLovedCard(true, myData.id)}></i>))
             }
             
-            <i className="fa-solid fa-location-dot"></i>
+            <i className="fa-solid fa-location-dot" onClick={()=> {
+              handleLocation(myData.location);
+            }}></i>
           </div> 
         </div>
       </div>
-      {/* :
-      <RemoveCard removeFrom="fav" cardID={myData.id} token={token}/>
-      } */}
-    </div>
+    // </div>
   )
 }
 export default Card

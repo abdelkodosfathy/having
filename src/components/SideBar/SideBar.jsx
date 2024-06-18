@@ -4,14 +4,15 @@ import './SideBar.css';
 import Combobox from '../Combobox/Combobox';
 import Button from './Button';
 import { DataContext } from '../Context';
-const SideBar = ({onFilterChange }) => {
+const SideBar = ({state,onClose, onFilterChange, maxPrice = 1000, minPrice = 0, media="big"}) => {
 
+  const comboRef = useRef(null);
   const minRef = useRef(null);
   const maxRef = useRef(null);
   
   const darkMode = useContext(DataContext).darkMode;
-  const [property,setProperty] = useState('house');
-  const [rooms,setRooms] = useState('1');
+  const [property,setProperty] = useState(null);
+  const [rooms,setRooms] = useState(null);
 
   function propertyType(prop){
     setProperty(prop);
@@ -26,32 +27,49 @@ const SideBar = ({onFilterChange }) => {
     minRef.current.innerText = priceData.value[0];
     maxRef.current.innerText = priceData.value[1];
   }
-  function handleFilters(city = null,
+  function handleFilters(
+    city = null,
     type = null,
-    bedrooms = 0,
-    bathrooms = 0,
-    minPrice = 0,
-    maxPrice = 0
+    bedrooms = null,
+    bathrooms = null,
+    minPrice = null,
+    maxPrice = null
   ){
-    const filters = {
-      city: city,
-      type: type,
-      bedrooms: bedrooms,
-      bathrooms: bathrooms,
-      minPrice: minPrice,
-      maxPrice: maxPrice
-    };
+    if(city !== null){
+      if(!(city.trim() === "")){
+        city = city.toLowerCase();
+      }
+    }
+    
+    if(bedrooms === "4+"){
+      bedrooms = 4;
+    }
+  const filters = {
+    city: city,
+    type: type,
+    bedrooms: bedrooms,
+    bathrooms: bathrooms,
+    minPrice: minPrice,
+    maxPrice: maxPrice
+  };
+
     console.log(filters);
     onFilterChange(filters)
   }
   return (
-    <div className={`side-bar ${darkMode? 'dark' : ''}`}>
-      <div className="head">
-        <h1>Filters</h1>
-        <p>Reset</p>
+    <div  className={`bluering ${state && "show"}`}>
+    <div className={`side-bar ${darkMode? 'dark' : ''} ${media}`}>
+      <button className='sidebard-close' onClick={onClose}>x</button>
+      <div className="head">        
+        {
+          media === "big" && <h1>Filters</h1>
+        }
+        {/* <p>Reset</p> */}
       </div>
       <div className="property-type">
-        <h3>Proprety type</h3>
+        {
+          media === "big" && <h3>Proprety type</h3>
+        }
         <div className="property-type-btns">
           <Button onClicked={() => propertyType("house")} proprety="house" isActivated={property}>
             <i className="fa-solid fa-house"></i>
@@ -69,18 +87,27 @@ const SideBar = ({onFilterChange }) => {
       </div>
       <div className="location">
         <h3>Location</h3>
-        <Combobox/>
+        <Combobox ref={comboRef}/>
       </div>
       <div className="Price-range">
         <h3>Price Range</h3>
-        {/* <input type="range" name="" id="" /> */}
         <div className="priceSlider">
-
+          <div className="price-box">
+              <div className="price">
+                <p>min</p>
+                <p ref={minRef}>{minPrice}</p>
+                </div>
+              <div className="price">
+                <p>max</p>
+                <p ref={maxRef}>{maxPrice}</p>
+                </div>
+            </div>
           <ReactSlider
+            key={"aa"}
             className="horizontal-slider"
             thumbClassName="example-thumb"
             trackClassName="example-track"
-            defaultValue={[0, 100]}
+            defaultValue={[minPrice, maxPrice]}
             // value={5}
             ariaLabel={['Lower thumb', 'Upper thumb']}
             ariaValuetext={state => `Thumb value ${state.valueNow}`}
@@ -88,18 +115,7 @@ const SideBar = ({onFilterChange }) => {
             pearling
             minDistance={5}
             onChange={(value, index) => handlePriceChange(value, index)}/>
-        </div>
-        <div className="price-box">
-          <div className="price">
-            <p>min</p>
-            <p ref={minRef}>0</p>
-            {/* <input ref={minRef} defaultValue={0} type='number' min={5}/> */}
-            </div>
-          <div className="price">
-            <p>max</p>
-            <p ref={maxRef}>100</p>
-            {/* <input ref={maxRef} defaultValue={100} type='number' max={100}/> */}
-            </div>
+
         </div>
       </div>
       <div className="side-bar-rooms">
@@ -111,29 +127,50 @@ const SideBar = ({onFilterChange }) => {
       <Button proprety="4+" onClicked={() => setRooms("4+")} isActivated={rooms}></Button>
       </div>
       </div>
-      <div className="rooms-features">
-        <ul>
-          <li>
-            <input type="checkbox" /> feature
-          </li>
-          <li>
-            <input type="checkbox" /> feature
-          </li>
-          <li>
-            <input type="checkbox" /> feature
-          </li>
-          <li>
-            <input type="checkbox" /> feature
-          </li>
-        </ul>
-      </div>
+      {/*the comment*/}
       <div className="apply-filters">
-        <button onClick={() => handleFilters(null, null, rooms, null, 100000, 3000000)}>
+      <button onClick={() =>{
+          handleFilters(null, null, null, null, null, null)
+          onClose();
+        }}>
+          Reset
+        </button>
+        <button onClick={() =>{
+          console.log(comboRef.current.value);
+          handleFilters(comboRef.current.value, property, rooms, null, null, null)
+          onClose();
+        }}>
           Apply
         </button>
+
       </div>
+    </div>
     </div>
   )
 }
 
 export default SideBar
+{/* <div className="rooms-features">
+  <ul>
+    <li>
+      <label>
+        <input type="checkbox" /> feature
+      </label>
+    </li>
+    <li>
+      <label>
+        <input type="checkbox" /> feature
+      </label>
+    </li>
+    <li>
+      <label>
+        <input type="checkbox" /> feature
+      </label>
+    </li>
+    <li>
+      <label>
+        <input type="checkbox" /> feature
+      </label>
+    </li>
+  </ul>
+</div> */}

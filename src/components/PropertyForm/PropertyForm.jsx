@@ -3,50 +3,103 @@ import axios from 'axios';
 import { DataContext } from '../Context';
 import { useContext } from 'react';
 import './PropertyForm.css';
+import InputMap from '../InputMap/InputMap';
+import LoadingCircle from '../LoadingCircle/LoadingCircle';
+import { forwardRef } from 'react';
 
-
-const Tab1 = ({ formData, handleChange, isUpdate }) => (
-  <div className='tab-1'>
-    <label>
-      Address:
-      <input
-        required
-        type="text"
-        name="address"
-        defaultValue={isUpdate ? isUpdate.address : formData.address}
-        onChange={handleChange}
-        disabled={isUpdate} // Disable input if isUpdate is provided
-      />
-    </label>
-    <label>
-      Location:
-      <input
-        required
-        type="text"
-        name="location"
-        defaultValue={isUpdate ? isUpdate.location : formData.location}
-        onChange={handleChange}
-        disabled={isUpdate} // Disable input if isUpdate is provided
-      />
-    </label>
-    <label>
-      City:
-      <select
-        required
-        name="city"
-        defaultValue={isUpdate ? isUpdate.city : formData.city}
-        onChange={handleChange}
-        disabled={isUpdate} // Disable input if isUpdate is provided
-      >
-        <option value="Cairo">Cairo</option>
-        <option value="Alexandria">Alexandria</option>
-        <option value="Giza">Giza</option>
-        <option value="Luxor">Luxor</option>
-        <option value="Aswan">Aswan</option>
-      </select>
-    </label>
-  </div>
-);
+// const Tab1 = ({ formData, handleChange, isUpdate, ref}) => {
+//   console.log("tap1: ",formData);
+//   return (
+//   <div className='tab-1'>
+//     <label>
+//       Address:
+//       <input
+//         required
+//         type="text"
+//         name="address"
+//         defaultValue={isUpdate ? isUpdate.address : formData.address}
+//         onChange={handleChange}
+//         disabled={isUpdate} // Disable input if isUpdate is provided
+//       />
+//     </label>
+//     <label>
+//       Location:
+//       <input
+//         required
+//         type="text"
+//         name="location"
+//         placeholder='u can use map to choose the location'
+//         defaultValue={isUpdate ? isUpdate.location : formData.location}
+//         value={position}
+//         onChange={handleChange}
+//         disabled={isUpdate} // Disable input if isUpdate is provided
+//       />
+//     </label>
+//     <label>
+//       City:
+//       <select
+//         required
+//         name="city"
+//         defaultValue={isUpdate ? isUpdate.city : formData.city}
+//         onChange={handleChange}
+//         disabled={isUpdate} // Disable input if isUpdate is provided
+//       >
+//         <option value="Cairo">Cairo</option>
+//         <option value="Alexandria">Alexandria</option>
+//         <option value="Giza">Giza</option>
+//         <option value="Luxor">Luxor</option>
+//         <option value="Aswan">Aswan</option>
+//       </select>
+//     </label>
+//   </div>)
+// };
+const Tab1 = ({ formData, handleChange, isUpdate, locationRef }) => {
+  // console.log("tap1: ", formData);
+  return (
+    <div className='tab-1'>
+      <label>
+        Address:
+        <input
+          required
+          type="text"
+          name="address"
+          defaultValue={isUpdate ? isUpdate.address : formData.address}
+          onChange={handleChange}
+          disabled={isUpdate} // Disable input if isUpdate is provided
+        />
+      </label>
+      <label>
+        Location:
+        <input
+          required
+          type="text"
+          name="location"
+          placeholder='You can use the map to choose the location'
+          defaultValue={isUpdate ? isUpdate.location : formData.location}
+          ref={locationRef}
+          onChange={handleChange}
+          disabled={isUpdate} // Disable input if isUpdate is provided
+        />
+      </label>
+      <label>
+        City:
+        <select
+          required
+          name="city"
+          defaultValue={isUpdate ? isUpdate.city : formData.city}
+          onChange={handleChange}
+          disabled={isUpdate} // Disable input if isUpdate is provided
+        >
+          <option value="Cairo">Cairo</option>
+          <option value="Alexandria">Alexandria</option>
+          <option value="Giza">Giza</option>
+          <option value="Luxor">Luxor</option>
+          <option value="Aswan">Aswan</option>
+        </select>
+      </label>
+    </div>
+  );
+};
 
 const Tab2 = ({ formData, handleChange, isUpdate }) => {
   const bedRef = useRef(0);
@@ -199,11 +252,10 @@ const Tab3 = ({ formData, handleChange, handleImageChange, isUpdate }) => (
           type="radio" 
           id='rent'
           name="action" 
-          value={1}
-          defaultChecked="checked"
+          value="1"
           onChange={handleChange}
           disabled={isUpdate} // Disable input if isUpdate is provided
-        />
+          />
         <label className='radio-button' htmlFor="rent">Rent</label>
       </div>
       <div className="radio">
@@ -211,7 +263,8 @@ const Tab3 = ({ formData, handleChange, handleImageChange, isUpdate }) => (
           type="radio" 
           id='sale'
           name="action" 
-          value={0} 
+          value="0" 
+          // defaultChecked="checked"
           onChange={handleChange}
           disabled={isUpdate} // Disable input if isUpdate is provided
         />
@@ -267,23 +320,25 @@ const Tab4 = ({ formData, handleChange, isUpdate }) => {
 }
 
 const PropertyForm  = ({ isUpdate, onAddProp}) => {
+  const classes = ["one", "two", "three", "four"];
   const loginData = useContext(DataContext).loginState;
   const token = loginData.token;
-
-  const classes = ["one", "two", "three", "four"];
-
+  const locationRef = useRef();
   const [formData, setFormData] = useState({
     address: '',
-    type: 'villa',
+    location: '',
+    city: 'cairo',
+
+    type: '',
     size: 0,
     bedrooms: 0,
     bathrooms: 0,
+
     description: '',
-    location: '',
-    city: 'cairo',
     image: [],
     price: 0,
     action: 0,
+    
     feature1: 0,
     feature2: 0,
     feature3: 0,
@@ -297,9 +352,33 @@ const PropertyForm  = ({ isUpdate, onAddProp}) => {
   });
 
   const [activeTab, setActiveTab] = useState(1);
+  const [validationError, setValidationError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // const handleNext = (e) => {
+  //   e.preventDefault();
+  //   setActiveTab(activeTab + 1);
+  // };
 
   const handleNext = (e) => {
     e.preventDefault();
+    if (activeTab === 1) {
+      if (!formData.address || !formData.location || !formData.city) {
+        setValidationError('Please fill in all fields in Step 1.');
+        return;
+      }
+    } else if (activeTab === 2) {
+      if (!formData.type || !formData.size || !formData.bedrooms || !formData.bathrooms) {
+        setValidationError('Please fill in all fields in Step 2.');
+        return;
+      }
+    } else if (activeTab === 3) {
+      if (!formData.description || !formData.price || formData.image.length === 0) {
+        setValidationError('Please fill in all fields in Step 3.');
+        return;
+      }
+    }
+    setValidationError('');
     setActiveTab(activeTab + 1);
   };
 
@@ -310,15 +389,15 @@ const PropertyForm  = ({ isUpdate, onAddProp}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("form: ", formData);
-    console.log("token: ", token);
-
+    setIsLoading(true);
+    // console.log("form: ", formData);
+    // console.log("token: ", token);
+    // console.log();
     if(isUpdate){
       const updateData = {
         price: formData.price,
         description: formData.description
       }
-      // console.log(formData);
       axios.patch('https://app.having.market/api/tasks/'+isUpdate.id, updateData, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -330,6 +409,7 @@ const PropertyForm  = ({ isUpdate, onAddProp}) => {
         console.error(error);
       });
     } else {
+      console.log("axios: ", formData);
       axios.post('https://app.having.market/api/tasks', formData, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -347,11 +427,19 @@ const PropertyForm  = ({ isUpdate, onAddProp}) => {
     }
   };
 
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData({
+  //     ...formData,
+  //     [name]: value
+  //   });
+  // };
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: type === 'number' ? Number(value) : value,
     });
   };
 
@@ -363,7 +451,23 @@ const PropertyForm  = ({ isUpdate, onAddProp}) => {
     });
   };
 
+  function changeLocation(e){
+    const mapLink = `https://www.google.com/maps?q=${e.lat},${e.lng}`;
+    console.log(mapLink);
+    setFormData({
+      ...formData,
+      location: mapLink,
+    });
+    if (locationRef.current) {
+      locationRef.current.value = mapLink;
+    }
+  }
+
+  function handleFindeLocation () {
+    console.log("finde location");
+  }
   return (
+    <>
     <form className="property-form" onSubmit={handleSubmit}>
       <div className={`steps-row ${classes[activeTab - 1]}`}>
         <div id="progress" className={`${classes[activeTab - 1]}`}></div>
@@ -373,147 +477,55 @@ const PropertyForm  = ({ isUpdate, onAddProp}) => {
         <div className="col" style={activeTab >= 4 ? {color: "white"} : null}>step 4</div>
       </div>
 
+      {
+        isLoading ? <LoadingCircle/> :
+      <>
       <div className={`form-tabs ${classes[activeTab - 1]}`}>
-        <Tab1 formData={formData} handleChange={handleChange} isUpdate={isUpdate} />
-        <Tab2 formData={formData} handleChange={handleChange} isUpdate={isUpdate} />
-        <Tab3 formData={formData} handleChange={handleChange} handleImageChange={handleImageChange} isUpdate={isUpdate} />
-        <Tab4 formData={formData} handleChange={handleChange} handleImageChange={handleImageChange} isUpdate={isUpdate} />
+        <Tab1
+          formData={formData}
+          handleChange={handleChange}
+          isUpdate={isUpdate}
+          locationRef={locationRef}
+         />
+        <Tab2
+         formData={formData}
+         handleChange={handleChange}
+         isUpdate={isUpdate} />
+        <Tab3
+         formData={formData}
+         handleChange={handleChange}
+         handleImageChange={handleImageChange}
+         isUpdate={isUpdate} />
+        <Tab4
+         formData={formData}
+         handleChange={handleChange}
+         handleImageChange={handleImageChange}
+         isUpdate={isUpdate} />
       </div>
-
+      {validationError && <div className="error-message">{validationError}</div>}
       <div className="button-row">
         {activeTab > 1 && <button onClick={(e) => handlePrev(e)} id='prev'>Previous</button>}
         {activeTab < 4 && <button onClick={(e) => handleNext(e)} id='next'>Next</button>}
         {activeTab === 4 && <button type="submit">Submit</button>}
       </div>
+      </>
+      }
     </form>
+      {
+        activeTab === 1 && 
+        <>
+          {/* <div className="popup-bar">
+            <button onClick={handleFindeLocation}>
+              <i className="fa-solid fa-map-location-dot"></i>
+            </button>
+            <LoadingCircle></LoadingCircle>
+          </div> */}
+
+          <InputMap onLocationChange={changeLocation} />
+        </>
+      }
+      </>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const PropertyForm = () => {
-//   const [formData, setFormData] = useState({
-//     address: '',
-//     type: 'villa',
-//     size: 0,
-//     bedrooms: 0,
-//     bathrooms: 0,
-//     description: '',
-//     location: '',
-//     city: '',
-//     images: [],
-//     price: 0,
-//     action: 'rent'
-//   });
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData({
-//       ...formData,
-//       [name]: value
-//     });
-//   };
-
-//   const handleImageChange = (e) => {
-//     const files = Array.from(e.target.files);
-//     setFormData({
-//       ...formData,
-//       images: files
-//     });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     // Handle form submission here
-//     console.log(formData);
-//   };
-
-//   return (
-//     <form className="property-form" onSubmit={handleSubmit}>
-//       <label>
-//         Address:
-//         <input type="text" name="address" value={formData.address} onChange={handleChange} />
-//       </label>
-//       <label>
-//         Location:
-//         <input type="text" name="location" value={formData.location} onChange={handleChange} />
-//       </label>
-//       <label>
-//         City:
-//         <select name="type" value={formData.type} onChange={handleChange}>
-//           <option value="Cairo">Cairo</option>
-//           <option value="Alexandria">Alexandria</option>
-//           <option value="Giza">Giza</option>
-//           <option value="Luxor">Luxor</option>
-//           <option value="Aswan">Aswan</option>
-//         </select>
-//       </label>
-//       <label>
-//         Type:
-//         <select name="type" value={formData.type} onChange={handleChange}>
-//           <option value="villa">Villa</option>
-//           <option value="apartment">Apartment</option>
-//           <option value="house">House</option>
-//         </select>
-//       </label>
-//       <label>
-//         Size:
-//         <input type="number" name="size" value={formData.size} onChange={handleChange} />
-//       </label>
-//       <label>
-//         Bedrooms:
-//         <input type="number" name="bedrooms" value={formData.bedrooms} onChange={handleChange} />
-//       </label>
-//       <label>
-//         Bathrooms:
-//         <input type="number" name="bathrooms" value={formData.bathrooms} onChange={handleChange} />
-//       </label>
-//       <label>
-//         Description:
-//         <textarea name="description" value={formData.description} onChange={handleChange} />
-//       </label>
-      
-//       <label>
-//         Images:
-//         <input type="file" name="images" multiple onChange={handleImageChange} />
-//       </label>
-//       <label>
-//         Price:
-//         <input type="number" name="price" value={formData.price} onChange={handleChange} />
-//       </label>
-//       <label>
-//         Action:
-//         <div className="radio-row">
-//           <label>Rent</label>
-//           <input type="radio" name="action" value="rent" checked={formData.action === 'rent'} onChange={handleChange} />
-//         </div>
-//         <div className="radio-row">
-//           <label>Sale</label>
-//           <input type="radio" name="action" value="sale" checked={formData.action === 'sale'} onChange={handleChange} />
-//         </div>
-//       </label>
-//       <button type="submit">Submit</button>
-//     </form>
-//   );
-// };
-
-
-
-
-
-
-
 
 export default PropertyForm;

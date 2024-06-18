@@ -1,19 +1,23 @@
 import "./Combobox.css";
-import { startTransition, useMemo, useState } from "react";
+import { startTransition, useMemo, useRef, useState, forwardRef} from "react";
+// import {  } from "react";
 import * as Ariakit from "@ariakit/react";
 import { matchSorter } from "match-sorter";
 import list from "./list.js";
 
-export default function Combobox() {
+const Combobox = forwardRef(function Combobox(props, ref) {
+  // const comboref = useRef();
   const [searchValue, setSearchValue] = useState("");
   const matches = useMemo(() => matchSorter(list, searchValue), [searchValue]);
   return (
     <Ariakit.ComboboxProvider
       setValue={(value) => {
+        // console.log("me",value);
+        // console.log("ref: ",comboref.current.value);
         startTransition(() => setSearchValue(value));
       }}
     >
-      <Ariakit.Combobox placeholder="e.g., Cario" className="combobox" />
+      <Ariakit.Combobox ref={ref} placeholder="e.g., Cario" className="combobox" />
       <Ariakit.ComboboxPopover gutter={8} sameWidth className="popover">
         {matches.length ? (
           matches.map((value) => (
@@ -29,4 +33,5 @@ export default function Combobox() {
       </Ariakit.ComboboxPopover>
     </Ariakit.ComboboxProvider>
   );
-}
+})
+export default Combobox

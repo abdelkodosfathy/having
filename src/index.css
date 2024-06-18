@@ -1,8 +1,36 @@
 :root{
   --green: #3aa856;
+  --blue: #edf6fc;
+}
+#root{
+  overflow: hidden;
 }
 body {
-  min-width: 1000px;
+  /* min-width: 1000px; */
   /* height: 100vh; */
-  /* background-color: rgb(70, 70, 70); */
+  background-color: rgb(255, 255, 255);
+}
+.react-card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  /* color: red; */
+  height: 60px; /* Adjust this value as per your content */
+  /* overflow: none; */
+}
+
+.react-card.expanded {
+  height: 200px; /* Adjust this value as per your content */
+}
+
+.react-card-header {
+  margin-bottom: 10px;
+}
+
+.react-card-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

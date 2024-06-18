@@ -5,7 +5,6 @@ import { TokenProvider } from './components/Context.jsx'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    
     <TokenProvider>
         <App />
     </TokenProvider>

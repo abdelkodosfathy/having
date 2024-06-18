@@ -1,0 +1,37 @@
+.card-viewer{
+    /* display: flex; */
+    
+    display: grid;
+    grid-template-columns: 45% 55%;
+    grid-template-rows: 60px calc(100% - 60px);
+    grid-column-gap: 0px;
+    background: var(--blue);
+}
+
+@media screen and (max-width: 1255px) {
+    .card-viewer{
+        width: 100%;
+        display: flex;
+        overflow-y: scroll;
+        flex-direction: column;
+        background: rgb(237, 246, 252);
+        scroll-padding-top: 50px; /* Adjust this value according to your requirement */
+    }
+    .blured{
+        /* filter: blur(5px); */
+    }
+    .card-viewer::-webkit-scrollbar{
+        width: 0;
+    }
+}
+@media screen and (max-width: 768px) {
+    .card-viewer{
+        padding: 10px;
+        gap: 10px;
+    }
+}
+
+.grid-container > p{
+    text-align: center;
+    width: 100%;
+  }

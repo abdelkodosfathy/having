@@ -9,15 +9,23 @@ import { useNavigate } from 'react-router-dom';
 import { forwardRef, useState, useRef, useImperativeHandle } from "react";
 
 const AuthForm = forwardRef(({}, ref) => {
+
+  const facebookUrl = "https://app.having.market/auth/facebook/redirect";
+  const googleUrl = "https://app.having.market/auth/google/redirect";
+  
+
   const navigate = useNavigate();
   const mainURL  = "https://app.having.market/api/";
   const dialog = useRef();
   const [panel, setPanel] = useState(false);
+  const [formActivated, setFormActivated] = useState(false);
   const tokenChanger = useContext(FunctionsContext).changeToken;
   
   const [verfied, setVerified] =  useState(false);
+  const [forgotPassWord, setForgotPassWord] =  useState(false);
 
-// for login proccess
+  const [loginError,setLoginError] = useState(null);
+
   function handleLogSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -25,23 +33,24 @@ const AuthForm = forwardRef(({}, ref) => {
       email: formData.get('email'),
       password: formData.get('password')
     };
-    console.log(data);
-    axios.post("https://app.having.market/api/login", data).then((e)=>{
-      if(e.status === 200){
-        const resToken = e.data.data.token
-        console.log(e);
-        tokenChanger(resToken, true);
-        LoginSuccessfully();
-        navigate("/buy");
-      }
-    }).catch(function (error) {
-      if (error.response.status === 401) {
-        alert("Unauthorized: Wrong password or account");
-      } else {
-        alert("there is somthing wrong in data you entered..");
-        // console.log("An error occurred:", error.message);
-      }
-    });
+  
+    axios.post("https://app.having.market/api/login", data)
+      .then((res) => {
+        if (res.status === 200) {
+          const resToken = res.data.data.token;
+          tokenChanger(resToken, true);
+          LoginSuccessfully();
+          navigate("/buy");
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        setLoginError(error.response.data.message);
+      })
+      .finally(() => {
+        // Reset the form inputs
+        e.target.reset();
+      });
   }
   // for registeration proccess
   function handleRegSubmit(e) {
@@ -103,6 +112,15 @@ const AuthForm = forwardRef(({}, ref) => {
       return !prev;
     });
   }
+
+  function handelChangeForm(e){
+    e.preventDefault();
+    setFormActivated(prev => {
+      return !prev;
+    })
+    console.log(formActivated);
+  }
+
   function LoginSuccessfully(){
     dialog.current.close();
     
@@ -121,21 +139,54 @@ const AuthForm = forwardRef(({}, ref) => {
 
     dialog.current.close();
   }
+
+  function handleForgotPassWord(e) {
+    e.preventDefault(e)
+    setForgotPassWord(prev => {
+      return !prev
+    });
+  }
+  function handleForgotPassWordSubmit(e) {
+    e.preventDefault();
+    const emailData = new FormData(e.target);
+    const passwordData = {
+      email: emailData.get('email')
+    };
+    axios.post(
+      "https://app.having.market/api/forgot-password",
+      passwordData,
+      {
+        headers: {
+          'Content-Type': 'application/vnd.api+json',
+          'Accept': 'application/vnd.api+json',
+        }
+      }
+    )
+    .then(res => {
+      if(res.status === 200){
+        alert("go to check your mail box")
+        setForgotPassWord(prev => {
+          return !prev
+        });
+      }
+    })
+    .catch(err => console.log(err));
+  }
   return createPortal(
     <dialog ref={dialog}
       className={`${styles.container} ${panel && styles.rightPanelActive}`}
       id="container"
     >
-      <div className={`${styles.formContainer} ${styles.signUpContainer}`}>
+      <div className={`${styles.formContainer}  ${styles.signUpContainer}`}>
         <form onSubmit={handleRegSubmit} >
         <i className={`fa-solid fa-xmark ${styles.close}`} onClick={handleClose}></i>
           <h1>Create Account</h1>
           <div className={styles.socialContainer}>
-            <a href="#" className="">
+            <a href={facebookUrl} className="">
               <i className="fab fa-facebook-f"></i>
             </a>
-            <a href="#" className="">
-              <i className="fab fa-google-plus-g"></i>
+            <a href={googleUrl} className="">
+              <i className="fab fa-google-plus-g" ></i>
             </a>
           </div>
           <span>or use your email for registration</span>
@@ -144,39 +195,51 @@ const AuthForm = forwardRef(({}, ref) => {
           <input required type="number" placeholder="phone" name='phone' autoComplete="off"/>
           <input required type="password" placeholder="Password" name='password' autoComplete="off"/>
           <input required type="password" placeholder="confirm password" name='password_confirmation' autoComplete="off"/>
-          <button className={styles.signUpButton}>Sigsn Up</button>
+          {/* <button className={styles.signUpButton}>Sigsn Up</button> */}
+
+          <div className={styles.signBtns}>
+          <button>Sign Up</button>
+          <button className={styles.mobileBtn} onClick={handelChangeForm}>Sign In</button> 
+          </div>
         </form>
       </div>
-      <div className={`${styles.formContainer} ${styles.signInContainer}`}>
-        <form onSubmit={handleLogSubmit} >
-        <i className={`fa-solid fa-xmark ${styles.close}`} onClick={handleClose}></i>
-          <h1>Sign in</h1>
-          <div className={styles.socialContainer}>
-            <a href="#" className="">
-              <i className="fab fa-facebook-f"></i>
-            </a>
-            <a href="#" className="">
-              <i className="fab fa-google-plus-g"></i>
-            </a>
+      <div className={`${styles.formContainer} ${formActivated && styles.mobileLeft} ${styles.signInContainer}`}>
+        {forgotPassWord ?
+        <form onSubmit={handleForgotPassWordSubmit}>
+          <i className={`fa-solid fa-arrow-left ${styles.close}`} onClick={handleForgotPassWord}></i>
+          <h1>Forgot Password!</h1>
+          <input required type="email" placeholder="type your email" name='email' autoComplete="email"/>
+          <div className={styles.forgetRow}>
+            <button>Send</button> 
           </div>
-          <span>or use your account</span>
-          <input required type="email" placeholder="Email" name='email' autoComplete="email"/>
-          <input required type="password" placeholder="Password" name='password' autoComplete="current-password"/>
-          <a href="#">Forgot your password?</a>
-          <button>Sign In</button> 
-          {/* <dotlottie-player 
-          src="https://lottie.host/a59f5b57-f547-477e-9873-dbcee063026d/z5KjHWBpnc.json"
-          background="transparent"
-          speed="1"
-          style={{width: "300px", height: "300px"}}
-          
-          autoplay>
-          </dotlottie-player>
-          <h3>Login Successfully</h3> */}
-        </form>
+
+        </form> : 
+        <form onSubmit={handleLogSubmit} >
+          <i className={`fa-solid fa-xmark ${styles.close}`} onClick={handleClose}></i>
+            <h1>Sign in</h1>
+            <div className={styles.socialContainer}>
+              <a href={facebookUrl} className="">
+                <i className="fab fa-facebook-f" onClick={() => window.location.href = facebookUrl}></i>
+                
+              </a>
+              <a href={googleUrl} className="">
+                <i className="fab fa-google-plus-g" onClick={() => window.location.href = googleUrl}></i>
+              </a>
+            </div>
+            <span>or use your account</span>
+            <input required type="email" placeholder="Email" name='email' autoComplete="email"/>
+            <input required type="password" placeholder="Password" name='password' autoComplete="current-password"/>
+            {loginError && <span className={styles.errorMessage}>{loginError}</span>}
+            <div className={styles.signBtns}>
+              <button>Sign In</button> 
+              <button className={styles.mobileBtn} onClick={handelChangeForm}>sign up</button> 
+            </div>
+            <button onClick={handleForgotPassWord} className={styles.forgetPassword}>Forgot your password?</button>
+          </form>
+        }
       </div>
       <div className={styles.overlayContainer + " panel " + 
-`${verfied === "in progress" || verfied === true ? styles.verification :''}`
+      `${verfied === "in progress" || verfied === true ? styles.verification :''}`
     }>
         <div className={styles.overlay}>
           <div className={`${styles.overlayPanel} ${styles.overlayLeft}`}>

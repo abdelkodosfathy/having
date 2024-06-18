@@ -1,10 +1,16 @@
 .navbar{
-  padding: 20px;
+  padding: 10px 20px;
+  position: relative;
+  /* top: 0; */
+  /* width: 100%; */
+  /* height: 58px; */
   display: flex;
   justify-content: space-between;
   background-color: #0b0f1f;
   color: white;
+  z-index: 1001;
   align-items: center;
+  height: 50px;
 }
 .navbar > ul{
   justify-content: space-between;
@@ -13,6 +19,7 @@
   width: 25%;
   min-width: 350px;
   max-width: 500px;
+  /* position: fixed; */
 }
 .navbar a{
   text-decoration: none;
@@ -79,4 +86,52 @@ opacity:1;
 .user-icon .list-items li:hover{
   color: white;
   background-color: var(--green);
+}
+.burger-icon{
+  display: none;
+  font-size: 26px;
+}
+.side-nav{
+  display: none;
+  position: absolute;
+  top: 100%;
+  width: 250px;
+  /* height: calc(100%); */
+  height: 100vh;
+  background-color: white;
+  z-index: 1;
+  font-size: 22px;
+  padding: 20px 20px;
+  /* display: none; */
+  transition: 0.5s;
+  left: -250px;
+  box-shadow: 0 0 15px -5px black;
+  color: black;
+}
+.side-nav ul{
+  list-style: none;
+  line-height: 50px;
+}
+.side-nav button{
+  border: none;
+  background: none;
+  font-size: 22px;
+}
+.side-nav a{
+  text-decoration: none;
+  color: black;
+}
+.side-nav li:hover{
+  text-decoration: underline;
+}
+@media screen and (max-width: 768px){
+  .burger-icon,.side-nav{
+    display: block;
+  }
+  .navbar > ul{
+    display: none;
+  }
+  .actions :nth-last-child(1){
+    display: none;
+  }
 }

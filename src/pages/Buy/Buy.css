@@ -1,24 +1,29 @@
 .buy{
   display: flex;
-  height: calc(100vh - 80px);
+  height: calc(100dvh - 50px);
+  position: relative;
 }
 .grid-container{
-  /* background: rgb(216, 224, 230); */
-    background: rgb(237, 246, 252);
-    min-width: 620px;
-    width: 630px;
-    overflow-y: scroll;
-    max-height: calc(100vh - 80px);
-    display: grid;
-    flex-direction: column;
-    /* align-items: center; */
-    /* scrollbar-width: 1px; */
+  padding: 0px 10px;
+  gap: 10px;
+  background: rgb(237, 246, 252);
+  
+  /* min-width: 520px; */
+  width: 100%;
+  overflow-y: scroll;
+  max-height: calc(100vh - 50px);
+  display: grid;
+  flex-direction: column;
 }
-
+.grid-container p{
+  display: inline-block;
+  margin: auto;
+}
 .grid-container::-webkit-scrollbar{
   width: 4px;
 }
 .loader {
+  margin: auto;
   justify-self:center;
   width: 120px;
   height: 20px;
@@ -28,4 +33,23 @@
 }
 @keyframes l17 {
     100% {background-size:120% 100%}
+}
+
+@media screen and (max-width: 1255px) {
+  .grid-container{
+    overflow-y: unset;
+    width: 100%;
+    max-height: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .buy{
+    height: calc(100vh - 50px);
+    /* max-height: calc(100% - 58px); */
+  }
+  .grid-container{
+    padding: 0;
+    gap: 0;
+  }
 }

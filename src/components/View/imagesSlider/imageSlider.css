@@ -57,3 +57,9 @@
   padding: 0;
   border: solid green 2px;
 }
+
+@media screen and (max-width: 1255px) {
+  .dep-images{
+    grid-area: 1 / 1 / 3 / 2;
+  }
+}

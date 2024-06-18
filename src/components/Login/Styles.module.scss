@@ -5,26 +5,6 @@
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }
-
-// body {
-//   font-family: 'Roboto Condensed', sans-serif;
-//   background: #f6f5f7;
-//   display: -webkit-box;
-//   display: -ms-flexbox;
-//   display: flex;
-//   -webkit-box-orient: vertical;
-//   -webkit-box-direction: normal;
-//       -ms-flex-direction: column;
-//           flex-direction: column;
-//   -webkit-box-pack: center;
-//       -ms-flex-pack: center;
-//           justify-content: center;
-//   -webkit-box-align: center;
-//       -ms-flex-align: center;
-//           align-items: center;
-//   height: 100vh;
-//   margin: -20px 0 50px;
-// }
 ::backdrop{
   background-color: rgba(0, 0, 0, 0.7);
 }
@@ -90,7 +70,7 @@ dialog{
   position: relative;
   overflow: hidden;
   width: 768px;
-  max-width: 100%;
+  max-width: calc(100% - 20px);
   min-height: 480px;
 }
 
@@ -250,7 +230,7 @@ dialog{
   color: white;
 }
 
-.formContainer button ,.overlayPanel button {
+.formContainer button:not(.forgetPassword) ,.overlayPanel button {
   cursor: pointer;
   border-radius: 20px;
   border: none;
@@ -266,6 +246,9 @@ dialog{
   transition: -webkit-transform 80ms ease-in;
   transition: transform 80ms ease-in;
   transition: transform 80ms ease-in, -webkit-transform 80ms ease-in;
+}
+.forgetPassword{
+  // background: red;
 }
 
 button.signUpButton {
@@ -322,4 +305,67 @@ button.ghost {
   -webkit-transform: translateX(-50%) !important;
   transform: translateX(-50%) !important;
   width: 100%;
+}
+
+.signBtns{
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.mobileBtn{
+  display: none;
+}
+.forgetPassword{
+  // background: red;
+  border: none;
+  text-decoration: underline;
+  margin: 10px 0;
+  background: none;
+  cursor: pointer;
+  }
+  .forgetRow {
+  width: 50%;
+  // display: flex;
+  // gap: 10px;
+  margin: 10px 0;
+}
+.forgetRow button{
+  width: 100%;
+  padding: 10px 20px!important;
+}
+.errorMessage{
+  color: red;
+  font-size: 16px !important;
+}
+@media screen and (max-width: 576px){
+  .container{
+    width: calc(100% - 60px);
+    min-width: 250px;
+  }
+  .overlayContainer {
+    display: none;
+  }
+  .formContainer {
+    width: 100%;
+  }
+  .formContainer form {
+    padding: 0 20px;
+  }
+  .formContainer{
+    opacity: 1;
+  }
+  .mobileBtn{
+    display: block;
+  }
+  .mobileLeft{
+    left: 100%;
+    // background: red;
+  }
+  
+}
+@media screen and (max-width: 400px){
+  .formContainer button{
+    // background: red;
+    padding: 12px 23px;
+  }
 }

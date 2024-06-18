@@ -1,10 +1,13 @@
 .user-page{
-  /* max-width:1000px ; */
-  display: flex;
   width: 100%;
   box-shadow: 0 0 23px -18px black;
-  margin: auto;
-  align-items: flex-start;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* padding: 10px 0; */
+  /* background: var(--blue); */
+  /* padding: 20px; */
 }
 .user-page .property-type{
   justify-self: flex-start;
@@ -125,4 +128,97 @@ margin: 0 !important;
   color: white;
   font-weight: 600;
   cursor: pointer;
+}
+.taps-container{
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background: white;
+  width: calc(100% - 20px);
+}
+.user-taps{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  
+  max-width: 600px;
+  /* align-items: center; */
+}
+.user-taps button:nth-last-child(1){
+  /* background: red; */
+  /* margin-right: auto; */
+}
+.user-taps button:first-of-type{
+  /* background: red; */
+  /* margin-left: auto; */
+}
+.user-taps button{
+  border: none;
+  background: none;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  cursor: pointer;
+  box-shadow: 0 5px 15px -10px black;
+  background-color: white;
+  /* color: white; */
+}
+.user-taps button.active{
+  background-color: var(--green);
+  color: white;
+}
+.user-taps button:hover{
+  background-color: var(--green);
+  color: white;
+}
+
+@media screen and (min-width: 1255px) {
+  .user-page .grid-container{
+    grid-area: 1/2/3/1;
+  } 
+  .user-page .card-viewer{
+    margin: 0;
+    height: calc(100vh - 110px);
+
+  }
+  .user-page{
+    /* overflow-y: hidden; */
+    /* padding-bottom:0 ; */
+  }
+}
+@media screen and (max-width: 768px) {
+  .taps-container{
+    padding: 10px;
+    margin: 0;
+    width: 100%;
+  }
+}
+
+.taps-container .show{
+  display: none;
+}
+@media screen and (max-width: 450px) {
+  .taps-container button{
+    font-size: 16px;
+    border: solid 1px var(--green);
+    border-radius: 5px;
+    box-shadow: unset;
+  }
+  .taps-container .hide{
+    display:none;
+  }
+  .taps-container .show{
+    display:block;
+  }
+  .user-taps > :not(button.active){
+
+  }
+  .user-taps > :not(button.active) p{
+    /* background: red; */
+    display: none;
+  }
 }

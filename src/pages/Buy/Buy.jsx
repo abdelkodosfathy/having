@@ -1,39 +1,16 @@
-import React, { useRef, useState,useEffect } from 'react'
+import React, { useState } from 'react'
 import './Buy.css'
-import Card from '../../components/Card/Card'
 import SideBar from '../../components/SideBar/SideBar'
-import View from '../../components/View/View'
 import CardsViewer from '../../components/CardsViewer/CardsViewer'
 const Buy = () => {
-  // const [selectedCard, setSelectedCard] = useState();
-  // const [fetched, setFetched] = useState(false);
-  // const viewRef = useRef(null);
-
-  // const [cardsData, setCardsData] = useState([]);
-  // useEffect(() => {
-  //   fetch('https://app.having.market/api/sell')
-  //     .then(response => response.json())
-  //     .then(sellData => {
-  //       setFetched(true)
-  //       setCardsData(sellData[0]);
-  //     })
-  //     .catch(error => console.error('Error fetching sell data:', error));
-  //   }, []);
-
-  //   useEffect(()=>{
-  //   if(fetched){
-  //   handelCardSelection(cardsData[0]);
-  //     }
-  //   },[cardsData])  
-    
-  //   function handelCardSelection(cardData){
-  //     setSelectedCard(cardData.id)
-  //     viewRef.current = cardData;
-  //   }
-
+    const [sidebarState, setSidebarState] = useState(false);
     const [filterData, setFilterData] = useState({
-      city: null,
-      type: null,
+    city: null,
+    type: null,
+    bedrooms: null,
+    bathrooms: null,
+    minPrice: null,
+    maxPrice: null
     });
 
     // Function to handle data changes from the SideBar
@@ -41,11 +18,13 @@ const Buy = () => {
       setFilterData(newData);
     };
 
-
+    function handleSidebar() {
+      setSidebarState(prev => !prev);
+    }
   return (
     <div className='buy'>
-    <SideBar onFilterChange={handleFilterChange}/>
-    <CardsViewer action={"sell"} filterData={filterData}/>
+    <SideBar state={sidebarState} onClose={handleSidebar} onFilterChange={handleFilterChange}/>
+    <CardsViewer onSidebarStateClicked={handleSidebar} action={"sell"} filterData={filterData}/>
     </div>
   )
 }

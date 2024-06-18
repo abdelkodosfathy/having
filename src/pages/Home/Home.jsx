@@ -1,5 +1,4 @@
 // import main from '../../imgs/dhabi.jpg'
-import main from '../../imgs/dhabi.webp'
 import './Home.css'
 import modern from '../../imgs/modernRoom.webp'
 import luxury from '../../imgs/roomluxry.webp'
@@ -12,18 +11,16 @@ const Home = ({notAuth}) => {
   if(notAuth){
     console.log("auth: please login");
   }
-  
   return (
     
     <div className='home'>
       <section className="home-main">
-        <img src={main} alt="" width="100%"/>
         <div className="home-search">
           <div className="search-filters">
             <button onClick={()=> navigate("/buy")}>للبيع</button>
             <button onClick={()=> navigate("/rent")}>للايجار</button>
           </div>
-          <div className="search-bar">
+          {/* <div className="search-bar">
             <button>ابحث</button>
             <button><i className="fa-solid fa-caret-down"></i> نوع العقار</button>
             <button><i className="fa-solid fa-caret-down"></i> غرف وحمامات</button>
@@ -31,7 +28,7 @@ const Home = ({notAuth}) => {
               <input type="text"  placeholder='اكتب اسم المدينة او المنطقة او نوع العقار'/>
               <i className="fa-solid fa-magnifying-glass"></i>
             </div>
-          </div> 
+          </div>  */}
         </div>
       </section>
       <section className="home-places">
@@ -53,7 +50,7 @@ const Home = ({notAuth}) => {
         </h1>
         <div className="feature-container">
           <div className="provided-featur right">
-            <img src={modern} alt="" width="700px"/>
+            <img src={modern} alt="Modern Units" />
             <div className="provided-text">
               <p>
                 {/* Explore our modern units designed for comfort and style.
@@ -73,10 +70,10 @@ const Home = ({notAuth}) => {
               Choose from urban lofts to townhouses, each crafted for sophistication and charm. */}
             </p>
           </div>
-          <img src={luxury} alt="" width="700px"/>
+          <img src={luxury} alt="Luxury Living" />
         </div>
         <div className="provided-featur right">
-          <img src={aboutimage} alt="" width="700px"/>
+          <img src={aboutimage} alt="Exceptional Customer Service" />
           <div className="provided-text">
             <p>
               استمتع بخدمة عملاء ممتازة وتجربة استلام سلسة لقطعتك الجديدة.
@@ -95,7 +92,7 @@ const Home = ({notAuth}) => {
               Choose from urban lofts to townhouses, each crafted for sophistication and charm. */}
             </p>
           </div>
-          <img src={luxury} alt="" width="700px"/>
+          <img src={luxury} alt="Luxury Living" />
         </div>
       </section>
       <Footer></Footer>
